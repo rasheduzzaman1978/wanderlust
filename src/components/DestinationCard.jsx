@@ -59,8 +59,10 @@ const DestinationCard = ({ destination }) => {
           <div className="text-right">
             <h3 className="text-lg font-bold text-gray-900">
               ${price}
+              <span className="ml-1 text-sm font-normal text-gray-400">
+                /Person
+              </span>
             </h3>
-            <p className="text-xs text-gray-400">/Person</p>
           </div>
         </div>
 

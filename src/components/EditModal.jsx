@@ -1,6 +1,7 @@
 "use client";
 
-import { Envelope } from "@gravity-ui/icons";
+import { useState } from "react";
+
 import {
   Button,
   FieldError,
@@ -8,14 +9,17 @@ import {
   Label,
   ListBox,
   Modal,
+  Select,
   Surface,
   TextArea,
   TextField,
-  Select,
 } from "@heroui/react";
+
 import { BiEdit } from "react-icons/bi";
 
 export function EditModal({ destination }) {
+  const [open, setOpen] = useState(false);
+
   const {
     _id,
     imageUrl,
@@ -28,102 +32,154 @@ export function EditModal({ destination }) {
     departureDate,
   } = destination;
 
+  // Update Destination
   const onSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData(e.currentTarget);
-    const destination = Object.fromEntries(formData.entries());
+    const updatedDestination = Object.fromEntries(formData.entries());
 
-    const res = await fetch(`http://localhost:5000/destination/${_id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(destination),
-    });
+    try {
+      const res = await fetch(`http://localhost:5000/destination/${_id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(updatedDestination),
+      });
 
-    const data = await res.json();
-    console.log(data);
+      const data = await res.json();
+
+      console.log(data);
+
+      // Close Modal After Save
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   return (
-    <Modal>
+    <>
+      {/* Edit Button */}
+      <Button
+        variant="outline"
+        className="rounded-none"
+        onPress={() => setOpen(true)}
+      >
+        <BiEdit className="mr-2" />
+        Edit
+      </Button>
 
-        <Button variant="outline" className={"rounded-none"}>
-          <BiEdit /> Edit
-        </Button>
+      {/* Modal */}
+      {open && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          {/* Modal Box */}
+          <div className="relative w-full max-w-4xl bg-white shadow-2xl overflow-hidden rounded-sm">
+            {/* Close Button */}
+            <button
+              onClick={() => setOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-black text-2xl"
+            >
+              ×
+            </button>
 
-      <Modal.Backdrop>
-        <Modal.Container placement="auto">
-          <Modal.Dialog className="sm:max-w-xl">
-            <Modal.CloseTrigger />
-            <Modal.Header>
-              <Modal.Heading>Edit Destination</Modal.Heading>
-            </Modal.Header>
-            <Modal.Body className="p-6">
+            {/* Header */}
+            <div className="px-8 pt-8 pb-2">
+              <h2 className="text-3xl font-semibold">
+                Update Travel Package
+              </h2>
+
+              <p className="text-sm text-gray-500 mt-2">
+                Make changes to the travel package details below
+              </p>
+            </div>
+
+            {/* Body */}
+            <div className="px-8 pb-8 max-h-[90vh] overflow-y-auto">
               <Surface variant="default">
-                <form onSubmit={onSubmit} className="p-10 space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <form onSubmit={onSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Destination Name */}
                     <div className="md:col-span-2">
                       <TextField
                         defaultValue={destinationName}
                         name="destinationName"
-                        isRequired
+                        required
                       >
                         <Label>Destination Name</Label>
+
                         <Input
                           placeholder="Bali Paradise"
-                          className="rounded-2xl"
+                          className="rounded-none"
                         />
+
                         <FieldError />
                       </TextField>
                     </div>
 
                     {/* Country */}
-                    <TextField defaultValue={country} name="country" isRequired>
+                    <TextField
+                      defaultValue={country}
+                      name="country"
+                      required
+                    >
                       <Label>Country</Label>
-                      <Input placeholder="Indonesia" className="rounded-2xl" />
+
+                      <Input
+                        placeholder="Indonesia"
+                        className="rounded-none"
+                      />
+
                       <FieldError />
                     </TextField>
 
-                    {/* Category - Updated Select Component */}
+                    {/* Category */}
                     <div>
                       <Select
                         defaultValue={category}
                         name="category"
-                        isRequired
+                        required
                         className="w-full"
                         placeholder="Select category"
                       >
                         <Label>Category</Label>
-                        <Select.Trigger className="rounded-2xl">
+
+                        <Select.Trigger className="rounded-none">
                           <Select.Value />
                           <Select.Indicator />
                         </Select.Trigger>
+
                         <Select.Popover>
                           <ListBox>
                             <ListBox.Item id="Beach" textValue="Beach">
                               Beach
-                              <ListBox.ItemIndicator />
                             </ListBox.Item>
+
                             <ListBox.Item id="Mountain" textValue="Mountain">
                               Mountain
-                              <ListBox.ItemIndicator />
                             </ListBox.Item>
+
                             <ListBox.Item id="City" textValue="City">
                               City
-                              <ListBox.ItemIndicator />
                             </ListBox.Item>
-                            <ListBox.Item id="Adventure" textValue="Adventure">
+
+                            <ListBox.Item
+                              id="Adventure"
+                              textValue="Adventure"
+                            >
                               Adventure
-                              <ListBox.ItemIndicator />
                             </ListBox.Item>
-                            <ListBox.Item id="Cultural" textValue="Cultural">
+
+                            <ListBox.Item
+                              id="Cultural"
+                              textValue="Cultural"
+                            >
                               Cultural
-                              <ListBox.ItemIndicator />
                             </ListBox.Item>
+
                             <ListBox.Item id="Luxury" textValue="Luxury">
                               Luxury
-                              <ListBox.ItemIndicator />
                             </ListBox.Item>
                           </ListBox>
                         </Select.Popover>
@@ -135,14 +191,16 @@ export function EditModal({ destination }) {
                       defaultValue={price}
                       name="price"
                       type="number"
-                      isRequired
+                      required
                     >
                       <Label>Price (USD)</Label>
+
                       <Input
                         type="number"
-                        placeholder="1299"
-                        className="rounded-2xl"
+                        placeholder="e.g., 1299"
+                        className="rounded-none"
                       />
+
                       <FieldError />
                     </TextField>
 
@@ -150,13 +208,15 @@ export function EditModal({ destination }) {
                     <TextField
                       defaultValue={duration}
                       name="duration"
-                      isRequired
+                      required
                     >
                       <Label>Duration</Label>
+
                       <Input
-                        placeholder="7 Days / 6 Nights"
-                        className="rounded-2xl"
+                        placeholder="e.g., 7 Days / 6 Nights"
+                        className="rounded-none"
                       />
+
                       <FieldError />
                     </TextField>
 
@@ -166,27 +226,31 @@ export function EditModal({ destination }) {
                         defaultValue={departureDate}
                         name="departureDate"
                         type="date"
-                        isRequired
+                        required
                       >
                         <Label>Departure Date</Label>
-                        <Input type="date" className="rounded-2xl" />
+
+                        <Input type="date" className="rounded-none" />
+
                         <FieldError />
                       </TextField>
                     </div>
 
-                    {/* Image URL - Removed preview */}
+                    {/* Image URL */}
                     <div className="md:col-span-2">
                       <TextField
                         defaultValue={imageUrl}
                         name="imageUrl"
-                        isRequired
+                        required
                       >
                         <Label>Image URL</Label>
+
                         <Input
                           type="url"
-                          placeholder="https://example.com/bali-paradise.jpg"
-                          className="rounded-2xl"
+                          placeholder="https://example.com/image.jpg"
+                          className="rounded-none"
                         />
+
                         <FieldError />
                       </TextField>
                     </div>
@@ -196,31 +260,46 @@ export function EditModal({ destination }) {
                       <TextField
                         defaultValue={description}
                         name="description"
-                        isRequired
+                        required
                       >
                         <Label>Description</Label>
+
                         <TextArea
                           placeholder="Describe the travel experience..."
-                          className="rounded-3xl"
+                          className="rounded-none min-h-[140px]"
                         />
+
                         <FieldError />
                       </TextField>
                     </div>
                   </div>
 
-                  {/* Buttons */}
-
-                  <Modal.Footer>
-                    <Button type="submit" slot="close">
-                      Save
+                  {/* Footer Buttons */}
+                  <div className="flex justify-end gap-3 pt-4">
+                    {/* Cancel */}
+                    <Button
+                      type="button"
+                      variant="bordered"
+                      onPress={() => setOpen(false)}
+                      className="rounded-none border border-red-400 text-red-500 px-6 h-11 bg-white hover:bg-red-50"
+                    >
+                      Cancel
                     </Button>
-                  </Modal.Footer>
+
+                    {/* Save Changes */}
+                    <Button
+                      type="submit"
+                      className="rounded-none px-6 h-11 bg-cyan-600 text-white hover:bg-cyan-700"
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
                 </form>
               </Surface>
-            </Modal.Body>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
