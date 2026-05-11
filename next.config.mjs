@@ -26,8 +26,17 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "static.bonikbarta.com",
+      },
+      {
+        protocol: "https",
         hostname: "www.shutterstock.com",
       },
+      {
+        protocol: "https",
+        hostname: "grandsylhet.com",
+      },
+      
     ],
   },
 };

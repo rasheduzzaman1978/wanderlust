@@ -1,26 +1,40 @@
 "use client"
 
 import { FieldError, Input, Label, TextField, Select, ListBox, TextArea, Button, Card } from "@heroui/react";
+// ভুল ইম্পোর্ট ঠিক করা হয়েছে
+import { useRouter } from "next/navigation"; 
 
 const AddDestinationPage = () => {
+    const router = useRouter(); // useRouter হুক ব্যবহার করুন
+
     const onSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const destination = Object.fromEntries(formData.entries());
 
-        console.log(destination);
+        // Price-কে নাম্বারে কনভার্ট করা (প্রয়োজন হলে)
+        if (destination.price) {
+            destination.price = Number(destination.price);
+        }
 
-        const res = await fetch('http://localhost:5000/destination', {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify(destination)
-        })
+        try {
+            const res = await fetch('http://localhost:5000/destination', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(destination)
+            });
 
-        const data = await res.json()
-
-
+            if (res.ok) {
+                // ডাটা সফলভাবে সেভ হলে রিডাইরেক্ট হবে
+                router.push('/destinations');
+            } else {
+                console.error("Failed to add destination");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
     }
 
     return (
