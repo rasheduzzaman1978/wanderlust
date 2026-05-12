@@ -49,11 +49,15 @@ const Navbar = () => {
         {/* Logo */}
         <Link href={"/"} className="flex items-center">
           <Image
-            src={"/assets/Wanderlast.png"}
-            height={120}
-            width={120}
-            alt="logo"
-            className="object-contain"
+            src="/assets/Wanderlast.png"
+            alt="Logo"
+            width={140}
+            height={40}
+            loading="eager"
+            style={{
+              width: "auto",
+              height: "auto",
+            }}
           />
         </Link>
 
@@ -70,7 +74,7 @@ const Navbar = () => {
 
           <li>
             <Link
-              href={"/login"}
+              href={"/signin"}
               className="text-sm font-medium text-gray-700 transition hover:text-cyan-600"
             >
               Login

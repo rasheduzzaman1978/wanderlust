@@ -6,12 +6,12 @@ import {
   Card,
   Input,
   Button,
+  Checkbox,
 } from "@heroui/react";
 
 import {
   Mail,
   Lock,
-  User,
 } from "lucide-react";
 
 import Image from "next/image";
@@ -23,7 +23,7 @@ import { toast } from "react-toastify";
 
 import { authClient } from "@/lib/auth-client";
 
-const SignUpPage = () => {
+const SignInPage = () => {
 
   const router = useRouter();
 
@@ -35,10 +35,12 @@ const SignUpPage = () => {
 
   // Submit Handler
   const onSubmit = async (e) => {
+
     e.preventDefault();
 
-    // Get Form Data
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(
+      e.currentTarget
+    );
 
     const user = Object.fromEntries(
       formData.entries()
@@ -46,45 +48,22 @@ const SignUpPage = () => {
 
     const newErrors = {};
 
-    // Name Validation
-    if (!user.name?.trim()) {
-      newErrors.name = "Full name is required";
-    }
-
     // Email Validation
     if (!user.email?.trim()) {
-      newErrors.email = "Email is required";
-    } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
-        user.email
-      )
-    ) {
-      newErrors.email = "Invalid email address";
+      newErrors.email =
+        "Email is required";
     }
 
     // Password Validation
     if (!user.password) {
-      newErrors.password = "Password is required";
-    } else if (user.password.length < 6) {
       newErrors.password =
-        "Password must be at least 6 characters";
-    }
-
-    // Confirm Password Validation
-    if (!user.confirmPassword) {
-      newErrors.confirmPassword =
-        "Please confirm your password";
-    } else if (
-      user.password !== user.confirmPassword
-    ) {
-      newErrors.confirmPassword =
-        "Passwords do not match";
+        "Password is required";
     }
 
     // Show Errors
     setErrors(newErrors);
 
-    // Stop Submit if Error Exists
+    // Stop Submit
     if (Object.keys(newErrors).length > 0) {
       return;
     }
@@ -93,15 +72,12 @@ const SignUpPage = () => {
 
       setLoading(true);
 
-      // Signup Request
+      // Sign In Request
       const { data, error } =
-        await authClient.signUp.email({
+        await authClient.signIn.email({
           email: user.email,
           password: user.password,
-          name: user.name,
         });
-
-      console.log({ data, error });
 
       // Error
       if (error) {
@@ -113,16 +89,11 @@ const SignUpPage = () => {
       if (data) {
 
         toast.success(
-          "Account Created Successfully!"
+          "Login Successful!"
         );
 
-        // Reset Form
         e.target.reset();
 
-        // Clear Errors
-        setErrors({});
-
-        // Redirect
         router.push("/");
       }
 
@@ -130,11 +101,14 @@ const SignUpPage = () => {
 
       console.log(err);
 
-      toast.error("Something went wrong!");
+      toast.error(
+        "Something went wrong!"
+      );
 
     } finally {
 
       setLoading(false);
+
     }
   };
 
@@ -144,14 +118,14 @@ const SignUpPage = () => {
       <Card className="w-full max-w-[430px] bg-white border border-gray-200 shadow-sm rounded-sm p-8">
 
         {/* Heading */}
-        <div className="text-center mb-7">
+        <div className="text-center mb-8">
 
-          <h1 className="text-4xl font-light text-gray-800">
-            Create Account
+          <h1 className="text-5xl font-semibold text-black">
+            Welcome Back
           </h1>
 
-          <p className="text-sm text-gray-400 mt-1">
-            Start your adventure with Wanderlust
+          <p className="text-sm text-gray-500 mt-2">
+            Resume your adventure with Wanderlust
           </p>
 
         </div>
@@ -162,54 +136,12 @@ const SignUpPage = () => {
           className="space-y-5"
         >
 
-          {/* Full Name */}
-          <div>
-
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-
-              Full Name
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
-            </label>
-
-            <div className="relative">
-
-              <User
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
-              />
-
-              <Input
-                type="text"
-                name="name"
-                placeholder="Enter your name"
-                className="pl-8"
-                variant="bordered"
-              />
-
-            </div>
-
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.name}
-              </p>
-            )}
-
-          </div>
-
           {/* Email */}
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
 
               Email Address
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
 
             </label>
 
@@ -245,10 +177,6 @@ const SignUpPage = () => {
 
               Password
 
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
             </label>
 
             <div className="relative">
@@ -261,7 +189,7 @@ const SignUpPage = () => {
               <Input
                 type="password"
                 name="password"
-                placeholder="Create a password"
+                placeholder="Enter your password"
                 className="pl-8"
                 variant="bordered"
               />
@@ -276,41 +204,19 @@ const SignUpPage = () => {
 
           </div>
 
-          {/* Confirm Password */}
-          <div>
+          {/* Remember + Forgot */}
+          <div className="flex items-center justify-between">
 
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Checkbox size="sm">
+              Remember me
+            </Checkbox>
 
-              Confirm Password
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
-            </label>
-
-            <div className="relative">
-
-              <Lock
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
-              />
-
-              <Input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm your password"
-                className="pl-8"
-                variant="bordered"
-              />
-
-            </div>
-
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.confirmPassword}
-              </p>
-            )}
+            <Link
+              href="/forgot-password"
+              className="text-sm text-cyan-500 hover:underline"
+            >
+              Forgot password?
+            </Link>
 
           </div>
 
@@ -319,22 +225,24 @@ const SignUpPage = () => {
             type="submit"
             fullWidth
             isDisabled={loading}
-            className="bg-cyan-500 hover:bg-cyan-600 text-white h-10 rounded-sm"
+            className="bg-cyan-500 hover:bg-cyan-600 text-white h-11 rounded-sm"
           >
+
             {loading
-              ? "Creating..."
-              : "Create Account"}
+              ? "Signing In..."
+              : "Sign In"}
+
           </Button>
 
         </form>
 
         {/* Divider */}
-        <div className="flex items-center gap-3 my-5">
+        <div className="flex items-center gap-3 my-6">
 
           <div className="flex-1 h-[1px] bg-gray-200"></div>
 
-          <span className="text-xs text-gray-400 whitespace-nowrap">
-            Or sign up with
+          <span className="text-sm text-gray-400 whitespace-nowrap">
+            Or continue with
           </span>
 
           <div className="flex-1 h-[1px] bg-gray-200"></div>
@@ -345,14 +253,14 @@ const SignUpPage = () => {
         <Button
           fullWidth
           variant="bordered"
-          className="bg-white border border-gray-200 h-10 rounded-sm"
+          className="bg-white border border-gray-200 h-11 rounded-sm"
         >
 
           <Image
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google"
-            width={16}
-            height={16}
+            width={18}
+            height={18}
             unoptimized
           />
 
@@ -363,13 +271,13 @@ const SignUpPage = () => {
         {/* Footer */}
         <p className="text-center text-sm text-gray-500 mt-6">
 
-          Already have an account?{" "}
+          Don't have an account?{" "}
 
           <Link
-            href="/signin"
-            className="text-cyan-500 hover:underline"
+            href="/signup"
+            className="text-cyan-500 hover:underline font-medium"
           >
-            Sign In
+            Sign Up
           </Link>
 
         </p>
@@ -379,4 +287,4 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+export default SignInPage;

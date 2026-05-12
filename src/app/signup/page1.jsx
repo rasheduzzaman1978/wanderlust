@@ -13,139 +13,98 @@ import {
   Lock,
   User,
 } from "lucide-react";
-
 import Image from "next/image";
-import Link from "next/link";
-
-import { useRouter } from "next/navigation";
-
-import { toast } from "react-toastify";
-
-import { authClient } from "@/lib/auth-client";
 
 const SignUpPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const router = useRouter();
-
-  // Error State
   const [errors, setErrors] = useState({});
 
-  // Loading State
-  const [loading, setLoading] = useState(false);
+  // Handle Input Change
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-  // Submit Handler
-  const onSubmit = async (e) => {
-    e.preventDefault();
-
-    // Get Form Data
-    const formData = new FormData(e.currentTarget);
-
-    const user = Object.fromEntries(
-      formData.entries()
-    );
-
+  // Validation
+  const validateForm = () => {
     const newErrors = {};
 
-    // Name Validation
-    if (!user.name?.trim()) {
+    // Name
+    if (!formData.name.trim()) {
       newErrors.name = "Full name is required";
     }
 
-    // Email Validation
-    if (!user.email?.trim()) {
+    // Email
+    if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (
       !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
-        user.email
+        formData.email
       )
     ) {
       newErrors.email = "Invalid email address";
     }
 
-    // Password Validation
-    if (!user.password) {
+    // Password
+    if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (user.password.length < 6) {
+    } else if (formData.password.length < 6) {
       newErrors.password =
         "Password must be at least 6 characters";
     }
 
-    // Confirm Password Validation
-    if (!user.confirmPassword) {
+    // Confirm Password
+    if (!formData.confirmPassword) {
       newErrors.confirmPassword =
         "Please confirm your password";
     } else if (
-      user.password !== user.confirmPassword
+      formData.password !== formData.confirmPassword
     ) {
       newErrors.confirmPassword =
         "Passwords do not match";
     }
 
-    // Show Errors
     setErrors(newErrors);
 
-    // Stop Submit if Error Exists
-    if (Object.keys(newErrors).length > 0) {
-      return;
-    }
+    return Object.keys(newErrors).length === 0;
+  };
 
-    try {
+  // Submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-      setLoading(true);
+    if (validateForm()) {
+      console.log("Form Submitted", formData);
 
-      // Signup Request
-      const { data, error } =
-        await authClient.signUp.email({
-          email: user.email,
-          password: user.password,
-          name: user.name,
-        });
+      alert("Account Created Successfully!");
 
-      console.log({ data, error });
+      // Reset Form
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
 
-      // Error
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      // Success
-      if (data) {
-
-        toast.success(
-          "Account Created Successfully!"
-        );
-
-        // Reset Form
-        e.target.reset();
-
-        // Clear Errors
-        setErrors({});
-
-        // Redirect
-        router.push("/");
-      }
-
-    } catch (err) {
-
-      console.log(err);
-
-      toast.error("Something went wrong!");
-
-    } finally {
-
-      setLoading(false);
+      setErrors({});
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center px-4">
 
       <Card className="w-full max-w-[430px] bg-white border border-gray-200 shadow-sm rounded-sm p-8">
 
         {/* Heading */}
         <div className="text-center mb-7">
-
           <h1 className="text-4xl font-light text-gray-800">
             Create Account
           </h1>
@@ -153,30 +112,21 @@ const SignUpPage = () => {
           <p className="text-sm text-gray-400 mt-1">
             Start your adventure with Wanderlust
           </p>
-
         </div>
 
         {/* Form */}
         <form
-          onSubmit={onSubmit}
+          onSubmit={handleSubmit}
           className="space-y-5"
         >
 
           {/* Full Name */}
           <div>
-
             <label className="block text-sm font-medium text-gray-700 mb-2">
-
               Full Name
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
             </label>
 
             <div className="relative">
-
               <User
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
@@ -185,11 +135,12 @@ const SignUpPage = () => {
               <Input
                 type="text"
                 name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Enter your name"
                 className="pl-8"
                 variant="bordered"
               />
-
             </div>
 
             {errors.name && (
@@ -197,24 +148,15 @@ const SignUpPage = () => {
                 {errors.name}
               </p>
             )}
-
           </div>
 
           {/* Email */}
           <div>
-
             <label className="block text-sm font-medium text-gray-700 mb-2">
-
               Email Address
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
             </label>
 
             <div className="relative">
-
               <Mail
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
@@ -223,11 +165,12 @@ const SignUpPage = () => {
               <Input
                 type="email"
                 name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Enter your email"
                 className="pl-8"
                 variant="bordered"
               />
-
             </div>
 
             {errors.email && (
@@ -235,24 +178,15 @@ const SignUpPage = () => {
                 {errors.email}
               </p>
             )}
-
           </div>
 
           {/* Password */}
           <div>
-
             <label className="block text-sm font-medium text-gray-700 mb-2">
-
               Password
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
             </label>
 
             <div className="relative">
-
               <Lock
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
@@ -261,11 +195,12 @@ const SignUpPage = () => {
               <Input
                 type="password"
                 name="password"
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="Create a password"
                 className="pl-8"
                 variant="bordered"
               />
-
             </div>
 
             {errors.password && (
@@ -273,24 +208,15 @@ const SignUpPage = () => {
                 {errors.password}
               </p>
             )}
-
           </div>
 
           {/* Confirm Password */}
           <div>
-
             <label className="block text-sm font-medium text-gray-700 mb-2">
-
               Confirm Password
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
             </label>
 
             <div className="relative">
-
               <Lock
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
@@ -299,11 +225,12 @@ const SignUpPage = () => {
               <Input
                 type="password"
                 name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
                 placeholder="Confirm your password"
                 className="pl-8"
                 variant="bordered"
               />
-
             </div>
 
             {errors.confirmPassword && (
@@ -311,26 +238,20 @@ const SignUpPage = () => {
                 {errors.confirmPassword}
               </p>
             )}
-
           </div>
 
           {/* Submit Button */}
           <Button
             type="submit"
             fullWidth
-            isDisabled={loading}
             className="bg-cyan-500 hover:bg-cyan-600 text-white h-10 rounded-sm"
           >
-            {loading
-              ? "Creating..."
-              : "Create Account"}
+            Create Account
           </Button>
-
         </form>
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-5">
-
           <div className="flex-1 h-[1px] bg-gray-200"></div>
 
           <span className="text-xs text-gray-400 whitespace-nowrap">
@@ -338,7 +259,6 @@ const SignUpPage = () => {
           </span>
 
           <div className="flex-1 h-[1px] bg-gray-200"></div>
-
         </div>
 
         {/* Google Button */}
@@ -347,31 +267,23 @@ const SignUpPage = () => {
           variant="bordered"
           className="bg-white border border-gray-200 h-10 rounded-sm"
         >
-
           <Image
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google"
             width={16}
             height={16}
-            unoptimized
-          />
+            />
 
           Sign Up With Google
-
         </Button>
 
         {/* Footer */}
         <p className="text-center text-sm text-gray-500 mt-6">
-
           Already have an account?{" "}
-
-          <Link
-            href="/signin"
-            className="text-cyan-500 hover:underline"
-          >
+          
+          <span className="text-cyan-500 hover:underline cursor-pointer">
             Sign In
-          </Link>
-
+          </span>
         </p>
 
       </Card>

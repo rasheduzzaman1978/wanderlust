@@ -22,6 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+        data-scroll-behavior="smooth"
       className={`${josefin.variable} scroll-smooth`}
     >
       <body className="flex min-h-screen flex-col bg-gray-50 font-sans antialiased">
