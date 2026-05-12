@@ -3,9 +3,9 @@ import FeaturedDestinations from "@/components/destination/FeaturedDestinations"
 
 export default function Home() {
   return (
-    <div >
-      <Banner/>
+    <main>
+      <Banner />
       <FeaturedDestinations />
-    </div>
+    </main>
   );
 }

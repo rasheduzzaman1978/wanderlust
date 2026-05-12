@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
       className={`${josefin.variable} scroll-smooth`}
     >
       <body className="flex min-h-screen flex-col bg-gray-50 font-sans antialiased">
-        
+
         {/* Navbar */}
         <Navbar />
 
@@ -36,7 +36,13 @@ export default function RootLayout({ children }) {
 
         {/* Footer */}
         <Footer />
-        <ToastContainer position="top-center" autoClose={1500} />
+
+        {/* Toast */}
+        <ToastContainer
+          position="top-center"
+          autoClose={1500}
+        />
+
       </body>
     </html>
   );
