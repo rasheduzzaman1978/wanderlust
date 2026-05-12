@@ -75,7 +75,7 @@ export function EditModal({ destination }) {
       {open && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           {/* Modal Box */}
-          <div className="relative w-full max-w-4xl bg-white shadow-2xl overflow-hidden rounded-sm">
+          <div className="relative w-full max-w-3xl bg-white shadow-2xl overflow-hidden rounded-sm">
             {/* Close Button */}
             <button
               onClick={() => setOpen(false)}
