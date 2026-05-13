@@ -12,6 +12,7 @@ import {
   Mail,
   Lock,
   User,
+  ImageIcon,
 } from "lucide-react";
 
 import Image from "next/image";
@@ -33,8 +34,12 @@ const SignUpPage = () => {
   // Loading State
   const [loading, setLoading] = useState(false);
 
+  // Image State
+  const [image, setImage] = useState("");
+
   // Submit Handler
   const onSubmit = async (e) => {
+
     e.preventDefault();
 
     // Get Form Data
@@ -99,6 +104,7 @@ const SignUpPage = () => {
           email: user.email,
           password: user.password,
           name: user.name,
+          image,
         });
 
       console.log({ data, error });
@@ -121,6 +127,9 @@ const SignUpPage = () => {
 
         // Clear Errors
         setErrors({});
+
+        // Reset Image
+        setImage("");
 
         // Redirect
         router.push("/");
@@ -166,13 +175,8 @@ const SignUpPage = () => {
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
-
               Full Name
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
+              <span className="text-red-500 ml-1">*</span>
             </label>
 
             <div className="relative">
@@ -200,17 +204,41 @@ const SignUpPage = () => {
 
           </div>
 
+          {/* Photo URL */}
+          <div>
+
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Photo URL
+            </label>
+
+            <div className="relative">
+
+              <ImageIcon
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
+              />
+
+              <Input
+                type="text"
+                placeholder="https://example.com/photo.jpg"
+                className="pl-8"
+                variant="bordered"
+                value={image}
+                onChange={(e) =>
+                  setImage(e.target.value)
+                }
+              />
+
+            </div>
+
+          </div>
+
           {/* Email */}
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
-
               Email Address
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
+              <span className="text-red-500 ml-1">*</span>
             </label>
 
             <div className="relative">
@@ -242,13 +270,8 @@ const SignUpPage = () => {
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
-
               Password
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
+              <span className="text-red-500 ml-1">*</span>
             </label>
 
             <div className="relative">
@@ -280,13 +303,8 @@ const SignUpPage = () => {
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
-
               Confirm Password
-
-              <span className="text-red-500 ml-1">
-                *
-              </span>
-
+              <span className="text-red-500 ml-1">*</span>
             </label>
 
             <div className="relative">
@@ -366,7 +384,7 @@ const SignUpPage = () => {
           Already have an account?{" "}
 
           <Link
-            href="/signin"
+            href="/login"
             className="text-cyan-500 hover:underline"
           >
             Sign In
