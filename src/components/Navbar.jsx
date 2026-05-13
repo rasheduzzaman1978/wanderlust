@@ -19,6 +19,7 @@ const Navbar = () => {
     { name: "Destinations", path: "/destinations" },
     { name: "My Bookings", path: "/my-bookings" },
     { name: "Add Destination", path: "/add-destination" },
+    { name: "My Profile", path: "/profile" },
   ];
 
   const handleLogout = async () => {
