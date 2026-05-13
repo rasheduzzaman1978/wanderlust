@@ -14,6 +14,11 @@ import {
   Lock,
 } from "lucide-react";
 
+import {
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -32,6 +37,10 @@ const SignInPage = () => {
 
   // Loading State
   const [loading, setLoading] = useState(false);
+
+  // Show Password State
+  const [showPassword, setShowPassword] =
+    useState(false);
 
   // Submit Handler
   const onSubmit = async (e) => {
@@ -55,7 +64,7 @@ const SignInPage = () => {
     }
 
     // Password Validation
-    if (!user.password) {
+    if (!user.password?.trim()) {
       newErrors.password =
         "Password is required";
     }
@@ -64,7 +73,9 @@ const SignInPage = () => {
     setErrors(newErrors);
 
     // Stop Submit
-    if (Object.keys(newErrors).length > 0) {
+    if (
+      Object.keys(newErrors).length > 0
+    ) {
       return;
     }
 
@@ -112,18 +123,27 @@ const SignInPage = () => {
     }
   };
 
-   // 🔐 Google login
-    const handleGoogleLogin = async () => {
+  // 🔐 Google Login
+  const handleGoogleLogin =
+    async () => {
+
       try {
+
         await authClient.signIn.social({
           provider: "google",
         });
+
       } catch (err) {
-        toast.error("Google login failed");
+
+        toast.error(
+          "Google login failed"
+        );
+
       }
     };
 
   return (
+
     <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center px-4 py-10">
 
       <Card className="w-full max-w-[430px] bg-white border border-gray-200 shadow-sm rounded-sm p-8">
@@ -132,11 +152,15 @@ const SignInPage = () => {
         <div className="text-center mb-8">
 
           <h1 className="text-5xl font-semibold text-black">
+
             Welcome Back
+
           </h1>
 
           <p className="text-sm text-gray-500 mt-2">
+
             Resume your adventure with Wanderlust
+
           </p>
 
         </div>
@@ -174,9 +198,13 @@ const SignInPage = () => {
             </div>
 
             {errors.email && (
+
               <p className="text-red-500 text-sm mt-1">
+
                 {errors.email}
+
               </p>
+
             )}
 
           </div>
@@ -197,20 +225,47 @@ const SignInPage = () => {
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
               />
 
-              <Input
-                type="password"
+              <input
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
                 name="password"
                 placeholder="Enter your password"
-                className="pl-8"
-                variant="bordered"
+                className={`w-full border rounded-lg pl-10 pr-10 py-2 outline-none ${
+                  errors.password
+                    ? "border-red-500"
+                    : "border-gray-300 focus:border-cyan-500"
+                }`}
               />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+
+                {showPassword
+                  ? <FaEyeSlash />
+                  : <FaEye />}
+
+              </button>
 
             </div>
 
             {errors.password && (
+
               <p className="text-red-500 text-sm mt-1">
+
                 {errors.password}
+
               </p>
+
             )}
 
           </div>
@@ -219,14 +274,18 @@ const SignInPage = () => {
           <div className="flex items-center justify-between">
 
             <Checkbox size="sm">
+
               Remember me
+
             </Checkbox>
 
             <Link
               href="/forgot-password"
               className="text-sm text-cyan-500 hover:underline"
             >
+
               Forgot password?
+
             </Link>
 
           </div>
@@ -253,7 +312,9 @@ const SignInPage = () => {
           <div className="flex-1 h-[1px] bg-gray-200"></div>
 
           <span className="text-sm text-gray-400 whitespace-nowrap">
+
             Or continue with
+
           </span>
 
           <div className="flex-1 h-[1px] bg-gray-200"></div>
@@ -276,7 +337,7 @@ const SignInPage = () => {
             unoptimized
           />
 
-          Sign Up With Google
+          Sign In With Google
 
         </Button>
 
@@ -289,12 +350,15 @@ const SignInPage = () => {
             href="/signup"
             className="text-cyan-500 hover:underline font-medium"
           >
+
             Sign Up
+
           </Link>
 
         </p>
 
       </Card>
+
     </div>
   );
 };

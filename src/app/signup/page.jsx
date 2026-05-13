@@ -15,6 +15,11 @@ import {
   ImageIcon,
 } from "lucide-react";
 
+import {
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -32,10 +37,21 @@ const SignUpPage = () => {
   const [errors, setErrors] = useState({});
 
   // Loading State
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
   // Image State
-  const [image, setImage] = useState("");
+  const [image, setImage] =
+    useState("");
+
+  // Password Toggle
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
 
   // Submit Handler
   const onSubmit = async (e) => {
@@ -43,54 +59,79 @@ const SignUpPage = () => {
     e.preventDefault();
 
     // Get Form Data
-    const formData = new FormData(e.currentTarget);
+    const formData =
+      new FormData(e.currentTarget);
 
-    const user = Object.fromEntries(
-      formData.entries()
-    );
+    const user =
+      Object.fromEntries(
+        formData.entries()
+      );
 
     const newErrors = {};
 
     // Name Validation
     if (!user.name?.trim()) {
-      newErrors.name = "Full name is required";
+
+      newErrors.name =
+        "Full name is required";
+
     }
 
     // Email Validation
     if (!user.email?.trim()) {
-      newErrors.email = "Email is required";
+
+      newErrors.email =
+        "Email is required";
+
     } else if (
       !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
         user.email
       )
     ) {
-      newErrors.email = "Invalid email address";
+
+      newErrors.email =
+        "Invalid email address";
+
     }
 
     // Password Validation
     if (!user.password) {
-      newErrors.password = "Password is required";
-    } else if (user.password.length < 6) {
+
+      newErrors.password =
+        "Password is required";
+
+    } else if (
+      user.password.length < 6
+    ) {
+
       newErrors.password =
         "Password must be at least 6 characters";
+
     }
 
     // Confirm Password Validation
     if (!user.confirmPassword) {
+
       newErrors.confirmPassword =
         "Please confirm your password";
+
     } else if (
-      user.password !== user.confirmPassword
+      user.password !==
+      user.confirmPassword
     ) {
+
       newErrors.confirmPassword =
         "Passwords do not match";
+
     }
 
     // Show Errors
     setErrors(newErrors);
 
-    // Stop Submit if Error Exists
-    if (Object.keys(newErrors).length > 0) {
+    // Stop Submit
+    if (
+      Object.keys(newErrors).length > 0
+    ) {
       return;
     }
 
@@ -107,12 +148,12 @@ const SignUpPage = () => {
           image,
         });
 
-      console.log({ data, error });
-
       // Error
       if (error) {
+
         toast.error(error.message);
         return;
+
       }
 
       // Success
@@ -139,27 +180,38 @@ const SignUpPage = () => {
 
       console.log(err);
 
-      toast.error("Something went wrong!");
+      toast.error(
+        "Something went wrong!"
+      );
 
     } finally {
 
       setLoading(false);
+
     }
   };
 
-  
-  // 🔐 Google login
-  const handleGoogleLogin = async () => {
-    try {
-      await authClient.signIn.social({
-        provider: "google",
-      });
-    } catch (err) {
-      toast.error("Google login failed");
-    }
-  };
+  // 🔐 Google Login
+  const handleGoogleLogin =
+    async () => {
+
+      try {
+
+        await authClient.signIn.social({
+          provider: "google",
+        });
+
+      } catch (err) {
+
+        toast.error(
+          "Google login failed"
+        );
+
+      }
+    };
 
   return (
+
     <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center px-4 py-10">
 
       <Card className="w-full max-w-[430px] bg-white border border-gray-200 shadow-sm rounded-sm p-8">
@@ -168,11 +220,15 @@ const SignUpPage = () => {
         <div className="text-center mb-7">
 
           <h1 className="text-4xl font-light text-gray-800">
+
             Create Account
+
           </h1>
 
           <p className="text-sm text-gray-400 mt-1">
+
             Start your adventure with Wanderlust
+
           </p>
 
         </div>
@@ -187,8 +243,10 @@ const SignUpPage = () => {
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
+
               Full Name
               <span className="text-red-500 ml-1">*</span>
+
             </label>
 
             <div className="relative">
@@ -209,9 +267,13 @@ const SignUpPage = () => {
             </div>
 
             {errors.name && (
+
               <p className="text-red-500 text-sm mt-1">
+
                 {errors.name}
+
               </p>
+
             )}
 
           </div>
@@ -220,7 +282,9 @@ const SignUpPage = () => {
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
+
               Photo URL
+
             </label>
 
             <div className="relative">
@@ -249,8 +313,10 @@ const SignUpPage = () => {
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
+
               Email Address
               <span className="text-red-500 ml-1">*</span>
+
             </label>
 
             <div className="relative">
@@ -271,9 +337,13 @@ const SignUpPage = () => {
             </div>
 
             {errors.email && (
+
               <p className="text-red-500 text-sm mt-1">
+
                 {errors.email}
+
               </p>
+
             )}
 
           </div>
@@ -282,8 +352,10 @@ const SignUpPage = () => {
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
+
               Password
               <span className="text-red-500 ml-1">*</span>
+
             </label>
 
             <div className="relative">
@@ -293,20 +365,47 @@ const SignUpPage = () => {
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
               />
 
-              <Input
-                type="password"
+              <input
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
                 name="password"
                 placeholder="Create a password"
-                className="pl-8"
-                variant="bordered"
+                className={`w-full border rounded-lg pl-10 pr-10 py-2 outline-none ${
+                  errors.password
+                    ? "border-red-500"
+                    : "border-gray-300 focus:border-cyan-500"
+                }`}
               />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+
+                {showPassword
+                  ? <FaEyeSlash />
+                  : <FaEye />}
+
+              </button>
 
             </div>
 
             {errors.password && (
+
               <p className="text-red-500 text-sm mt-1">
+
                 {errors.password}
+
               </p>
+
             )}
 
           </div>
@@ -315,8 +414,10 @@ const SignUpPage = () => {
           <div>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
+
               Confirm Password
               <span className="text-red-500 ml-1">*</span>
+
             </label>
 
             <div className="relative">
@@ -326,20 +427,47 @@ const SignUpPage = () => {
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
               />
 
-              <Input
-                type="password"
+              <input
+                type={
+                  showConfirmPassword
+                    ? "text"
+                    : "password"
+                }
                 name="confirmPassword"
                 placeholder="Confirm your password"
-                className="pl-8"
-                variant="bordered"
+                className={`w-full border rounded-lg pl-10 pr-10 py-2 outline-none ${
+                  errors.confirmPassword
+                    ? "border-red-500"
+                    : "border-gray-300 focus:border-cyan-500"
+                }`}
               />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConfirmPassword(
+                    !showConfirmPassword
+                  )
+                }
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+
+                {showConfirmPassword
+                  ? <FaEyeSlash />
+                  : <FaEye />}
+
+              </button>
 
             </div>
 
             {errors.confirmPassword && (
+
               <p className="text-red-500 text-sm mt-1">
+
                 {errors.confirmPassword}
+
               </p>
+
             )}
 
           </div>
@@ -351,9 +479,11 @@ const SignUpPage = () => {
             isDisabled={loading}
             className="bg-cyan-500 hover:bg-cyan-600 text-white h-10 rounded-sm"
           >
+
             {loading
               ? "Creating..."
               : "Create Account"}
+
           </Button>
 
         </form>
@@ -364,7 +494,9 @@ const SignUpPage = () => {
           <div className="flex-1 h-[1px] bg-gray-200"></div>
 
           <span className="text-xs text-gray-400 whitespace-nowrap">
+
             Or sign up with
+
           </span>
 
           <div className="flex-1 h-[1px] bg-gray-200"></div>
@@ -400,12 +532,15 @@ const SignUpPage = () => {
             href="/login"
             className="text-cyan-500 hover:underline"
           >
+
             Sign In
+
           </Link>
 
         </p>
 
       </Card>
+
     </div>
   );
 };
