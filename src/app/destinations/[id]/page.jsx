@@ -1,25 +1,100 @@
+"use client";
+
 import { DeleteAlert } from "@/components/DeleteAlert";
 import { EditModal } from "@/components/EditModal";
 import Image from "next/image";
 import { FaRegCalendar } from "react-icons/fa6";
 import { LuMapPin } from "react-icons/lu";
 import { FaStar } from "react-icons/fa";
+import { DatePicker, Button } from "@heroui/react";
+import { parseDate, today, getLocalTimeZone } from "@internationalized/date";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
-const DestinationDetailsPage = async ({ params }) => {
-  const { id } = await params;
+import { useParams } from "next/navigation";
 
-  const res = await fetch(`http://localhost:5000/destination/${id}`);
-  const destination = await res.json();
+const DestinationDetailsPage = () => {
+
+  const params = useParams();
+
+  const [destination, setDestination] = useState(null);
+
+  const [selectedDate, setSelectedDate] = useState(
+    today(getLocalTimeZone())
+  );
+
+  useEffect(() => {
+
+    const fetchDestination = async () => {
+
+      const res = await fetch(
+        `http://localhost:5000/destination/${params.id}`
+      );
+
+      const data = await res.json();
+
+      setDestination(data);
+    };
+
+    fetchDestination();
+
+  }, [params.id]);
+
+  if (!destination) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
   const {
+    _id,
     imageUrl,
     price,
     destinationName,
     duration,
     country,
     description,
-    departureDate,
   } = destination;
+
+  const handleBooking = async () => {
+
+    const bookingData = {
+      destinationId: _id,
+      destinationName,
+      country,
+      imageUrl,
+      price,
+      departureDate: selectedDate.toString(),
+      bookedAt: new Date(),
+    };
+
+    try {
+
+      const res = await fetch(
+        "http://localhost:5000/bookings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bookingData),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.insertedId) {
+        toast.success("Booking Successful");
+      }
+
+    } catch (error) {
+
+      console.log(error);
+      toast.error("Booking Failed");
+    }
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-8">
@@ -142,21 +217,23 @@ const DestinationDetailsPage = async ({ params }) => {
               per person
             </p>
 
-            {/* Departure Date */}
-            <div className="mt-6 rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-gray-500">
-                Departure Date
-              </p>
-
-              <h3 className="mt-1 font-semibold text-gray-800">
-                {departureDate}
-              </h3>
+            {/* Date Picker */}
+            <div className="mt-6">
+              <DatePicker
+                label="Departure Date"
+                minValue={today(getLocalTimeZone())}
+                value={selectedDate}
+                onChange={setSelectedDate}
+              />
             </div>
 
             {/* Button */}
-            <button className="mt-6 w-full rounded-lg bg-cyan-500 px-4 py-3 font-semibold text-white transition hover:bg-cyan-600">
+            <Button
+              onPress={handleBooking}
+              className="mt-6 w-full bg-cyan-500 font-semibold text-white"
+            >
               Book Now
-            </button>
+            </Button>
 
             {/* Extra Info */}
             <div className="mt-6 space-y-3 text-sm text-gray-600">

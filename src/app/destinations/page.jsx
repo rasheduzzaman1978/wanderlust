@@ -21,6 +21,7 @@ const DestinationPage = () => {
     setSortBy,
   } = useDestinations();
 
+  console.log(filteredDestinations);
   return (
     <div className="mx-auto max-w-7xl px-5 py-10">
 
