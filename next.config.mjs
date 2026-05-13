@@ -36,6 +36,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "grandsylhet.com",
       },
+
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
       
     ],
   },

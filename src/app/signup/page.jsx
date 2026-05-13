@@ -147,6 +147,18 @@ const SignUpPage = () => {
     }
   };
 
+  
+  // 🔐 Google login
+  const handleGoogleLogin = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+      });
+    } catch (err) {
+      toast.error("Google login failed");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center px-4 py-10">
 
@@ -361,6 +373,7 @@ const SignUpPage = () => {
 
         {/* Google Button */}
         <Button
+          onClick={handleGoogleLogin}
           fullWidth
           variant="bordered"
           className="bg-white border border-gray-200 h-10 rounded-sm"
