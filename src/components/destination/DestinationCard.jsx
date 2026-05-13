@@ -25,6 +25,7 @@ const DestinationCard = ({ destination }) => {
           src={imageUrl}
           alt={destinationName}
           fill
+          sizes="(max-width: 768px) 100vw, 400px"
           className="object-cover transition duration-500 group-hover:scale-110"
         />
 

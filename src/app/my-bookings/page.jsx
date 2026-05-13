@@ -1,5 +1,6 @@
 import React from "react";
 import { CalendarDays, Clock3, Eye, Trash2, MapPin } from "lucide-react";
+import Image from "next/image";
 
 const bookings = [
   {
@@ -62,6 +63,9 @@ export default function MyBookingsPage() {
           <p className="text-gray-500 mt-2">
             Manage and view your upcoming travel plans
           </p>
+          <p className="mt-4 text-sm text-gray-500">
+        Showing {count} destinations
+      </p>
         </div>
 
         {/* Booking Cards */}
@@ -74,10 +78,12 @@ export default function MyBookingsPage() {
               <div className="flex flex-col md:flex-row">
                 {/* Image */}
                 <div className="md:w-80 h-60 md:h-auto">
-                  <img
+                  <Image
                     src={booking.imageUrl}
                     alt={booking.destinationName}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 300px"
+                    className="object-cover"
                   />
                 </div>
 
