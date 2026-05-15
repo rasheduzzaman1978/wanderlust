@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 
 import DestinationCard from "./DestinationCard";
+import Link from "next/link";
+import { FaArrowRight } from "react-icons/fa6";
 
 const FeaturedDestinations = () => {
   const [destinations, setDestinations] = useState([]);
@@ -29,8 +31,9 @@ const FeaturedDestinations = () => {
     <section className="mx-auto max-w-7xl px-5 py-14">
 
       {/* Heading */}
-      <div className="mb-10 flex items-center justify-between">
-
+     <div className="mb-10 flex items-center justify-between">
+  
+        {/* Left Content */}
         <div>
           <h2 className="text-3xl font-bold text-gray-900">
             Featured Destinations
@@ -40,6 +43,14 @@ const FeaturedDestinations = () => {
             Handpicked travel experiences for adventure seekers
           </p>
         </div>
+
+        {/* Right Button */}
+        <Link href="/destinations">
+          <button className="flex items-center gap-2 border border-sky-400 px-5 py-2 text-sm font-medium text-sky-500 hover:bg-sky-50 transition">
+            <span>ALL DESTINATIONS</span>
+            <FaArrowRight />
+          </button>
+        </Link>
 
       </div>
 
