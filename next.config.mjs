@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactCompiler: true,
 
   images: {
     remotePatterns: [
@@ -36,12 +35,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "grandsylhet.com",
       },
-
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
-      
     ],
   },
 };

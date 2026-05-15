@@ -1,117 +1,353 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { authClient } from "@/lib/auth-client";
-import { 
-  Button, 
-  Input, 
-  Modal
+
+import {
+  Button,
+  Input,
+  Modal,
 } from "@heroui/react";
-import { BiSolidEdit, BiUser } from "react-icons/bi";
-import { toast } from "react-toastify";
 
+import {
+  BiSolidEdit,
+  BiUser,
+} from "react-icons/bi";
 
-export default function UpdateUserModal({ user }) {
-  // শুরুতে এটি অবশ্যই false থাকবে যাতে সরাসরি দেখা না যায়
-  const [isOpen, setIsOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+import toast from "react-hot-toast";
 
+export default function UpdateUserModal({
+  user,
+}) {
+
+  // ======================================================
+  // STATES
+  // ======================================================
+  const [
+    isOpen,
+    setIsOpen,
+  ] = useState(false);
+
+  const [
+    name,
+    setName,
+  ] = useState("");
+
+  const [
+    image,
+    setImage,
+  ] = useState("");
+
+  const [
+    isLoading,
+    setIsLoading,
+  ] = useState(false);
+
+  // ======================================================
+  // SET USER DATA
+  // ======================================================
   useEffect(() => {
-    if (isOpen && user) {
-      setName(user?.name || "");
-      setImage(user?.image || "");
-    }
-  }, [isOpen, user]);
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    try {
-      await authClient.updateUser({ name, image });
-      toast.success("Profile updated 🎉");
-      setIsOpen(false);
-      setTimeout(() => window.location.reload(), 500);
-    } catch (err) {
-      toast.error(err.message || "Update failed ❌");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    if (
+      isOpen &&
+      user
+    ) {
 
+      setName(
+        user?.name || ""
+      );
+
+      setImage(
+        user?.image || ""
+      );
+    }
+
+  }, [
+    isOpen,
+    user,
+  ]);
+
+  // ======================================================
+  // HANDLE UPDATE
+  // ======================================================
+  const handleSubmit =
+    async () => {
+
+      setIsLoading(true);
+
+      try {
+
+        await authClient.updateUser({
+          name,
+          image,
+        });
+
+        toast.success(
+          "Profile updated 🎉"
+        );
+
+        setIsOpen(false);
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+
+      } catch (err) {
+
+        toast.error(
+          err.message ||
+          "Update failed ❌"
+        );
+
+      } finally {
+
+        setIsLoading(false);
+      }
+    };
+
+  // ======================================================
+  // UI
+  // ======================================================
   return (
     <>
-      {/* আপডেট বাটন - ছবির মতো হালকা ব্যাকগ্রাউন্ড */}
+
+      {/* ====================================================== */}
+      {/* OPEN BUTTON */}
+      {/* ====================================================== */}
       <Button
-        onPress={() => setIsOpen(true)}
-        className="w-full bg-[#16A9C7] hover:bg-[#1298b3] text-white font-medium py-6 rounded-none text-[15px] shadow-none flex items-center justify-center gap-2 transition-all">
+        onPress={() =>
+          setIsOpen(true)
+        }
+        className="
+          w-full
+          bg-[#16A9C7]
+          hover:bg-[#1298b3]
+          text-white
+          font-medium
+          py-6
+          rounded-none
+          text-[15px]
+          shadow-none
+          flex
+          items-center
+          justify-center
+          gap-2
+          transition-all
+        "
+      >
+
         <BiSolidEdit className="text-lg" />
+
         Edit Profile
+
       </Button>
 
-      {/* মোডালটি কন্ডিশনালি রেন্ডার করা হয়েছে */}
+      {/* ====================================================== */}
+      {/* MODAL */}
+      {/* ====================================================== */}
       {isOpen && (
-        <Modal 
-          isOpen={true} 
-          onOpenChange={(open) => setIsOpen(open)}
+
+        <Modal
+          isOpen={true}
+          onOpenChange={(open) =>
+            setIsOpen(open)
+          }
           placement="center"
           backdrop="blur"
-          // এটি নিশ্চিত করবে যে মোডালটি কার্ডের নিচে না গিয়ে স্ক্রিনের একদম উপরে ভাসবে
           className="z-[9999]"
         >
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <section className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl relative animate-in fade-in zoom-in duration-200">
-              {/* হেডার */}
+
+          <div className="
+            fixed
+            inset-0
+            z-[9999]
+            flex
+            items-center
+            justify-center
+            p-4
+            bg-black/40
+            backdrop-blur-sm
+          ">
+
+            <section className="
+              bg-white
+              rounded-2xl
+              p-6
+              md:p-8
+              w-full
+              max-w-md
+              shadow-2xl
+              relative
+              animate-in
+              fade-in
+              zoom-in
+              duration-200
+            ">
+
+              {/* ====================================================== */}
+              {/* HEADER */}
+              {/* ====================================================== */}
               <div className="flex flex-col gap-2 mb-6">
-                <div className="bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center">
-                  <BiUser className="text-blue-500 text-2xl" />
+
+                <div className="
+                  bg-blue-50
+                  w-12
+                  h-12
+                  rounded-full
+                  flex
+                  items-center
+                  justify-center
+                ">
+
+                  <BiUser className="
+                    text-blue-500
+                    text-2xl
+                  " />
+
                 </div>
-                <h2 className="text-xl font-bold text-gray-900"> Update User</h2>
+
+                <h2 className="
+                  text-xl
+                  font-bold
+                  text-gray-900
+                ">
+
+                  Update User
+
+                </h2>
+
               </div>
 
-              {/* ইনপুট বডি */}
-              <div className="space-y-6 text-left">
+              {/* ====================================================== */}
+              {/* INPUTS */}
+              {/* ====================================================== */}
+              <div className="
+                space-y-5
+                text-left
+              ">
+
+                {/* Name */}
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700">Name:</label>
+
+                  <label className="
+                    block
+                    text-sm
+                    font-medium
+                    mb-1
+                    text-gray-700
+                  ">
+
+                    Name
+
+                  </label>
+
                   <Input
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) =>
+                      setName(
+                        e.target.value
+                      )
+                    }
                     placeholder="Enter your name"
                     variant="bordered"
-                    className="font-medium w-60 md:w-75"
+                    className="font-medium w-full"
                   />
+
                 </div>
+
+                {/* Image */}
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700">Image URL:</label>
+
+                  <label className="
+                    block
+                    text-sm
+                    font-medium
+                    mb-1
+                    text-gray-700
+                  ">
+
+                    Image URL
+
+                  </label>
+
                   <Input
                     value={image}
-                    onChange={(e) => setImage(e.target.value)}
+                    onChange={(e) =>
+                      setImage(
+                        e.target.value
+                      )
+                    }
                     placeholder="https://example.com/avatar.jpg"
                     variant="bordered"
-                    className="font-medium"
+                    className="font-medium w-full"
                   />
+
                 </div>
+
               </div>
 
-              {/* ফুটার বাটনসমূহ */}
-              <div className="flex gap-3 justify-end mt-8">
-                <Button 
-                  variant="light" 
-                  onPress={() => setIsOpen(false)}
-                  className="font-semibold text-blue-500"
+              {/* ====================================================== */}
+              {/* FOOTER */}
+              {/* ====================================================== */}
+              <div className="
+                flex
+                flex-col-reverse
+                sm:flex-row
+                gap-3
+                justify-end
+                mt-8
+              ">
+
+                {/* Cancel */}
+                <Button
+                  variant="light"
+                  onPress={() =>
+                    setIsOpen(false)
+                  }
+                  className="
+                    font-semibold
+                    text-blue-500
+                    w-full
+                    sm:w-auto
+                  "
                 >
+
                   Cancel
+
                 </Button>
-                <Button 
-                  onPress={handleSubmit}
-                  className="bg-blue-500 text-white font-semibold px-8 rounded-xl shadow-md"
-                  isLoading={isLoading}
+
+                {/* Save */}
+                <Button
+                  onPress={
+                    handleSubmit
+                  }
+                  className="
+                    bg-blue-500
+                    hover:bg-blue-600
+                    text-white
+                    font-semibold
+                    px-8
+                    rounded-xl
+                    shadow-md
+                    w-full
+                    sm:w-auto
+                  "
+                  isLoading={
+                    isLoading
+                  }
                 >
+
                   Save
+
                 </Button>
+
               </div>
+
             </section>
+
           </div>
+
         </Modal>
       )}
     </>

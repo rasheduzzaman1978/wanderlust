@@ -5,7 +5,7 @@ import { AlertDialog, Button } from "@heroui/react";
 
 import { useRouter } from "next/navigation";
 
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 export function DeleteAlert({ destination }) {
   const { _id, destinationName } = destination;

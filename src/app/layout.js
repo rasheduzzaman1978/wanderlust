@@ -4,8 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],
@@ -39,9 +38,11 @@ export default function RootLayout({ children }) {
         <Footer />
 
         {/* Toast */}
-        <ToastContainer
+        <Toaster
           position="top-center"
-          autoClose={1500}
+          toastOptions={{
+            duration: 1500,
+          }}
         />
 
       </body>

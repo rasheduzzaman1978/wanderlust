@@ -14,7 +14,7 @@ import {
 
 import { useRouter } from "next/navigation";
 
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const AddDestinationPage = () => {
   const router = useRouter();
