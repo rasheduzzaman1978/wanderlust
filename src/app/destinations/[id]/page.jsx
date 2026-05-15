@@ -3,10 +3,10 @@
 import { DeleteAlert } from "@/components/DeleteAlert";
 import { EditModal } from "@/components/EditModal";
 import Image from "next/image";
-import { FaArrowLeft, FaRegCalendar } from "react-icons/fa6";
+import { FaRegCalendar } from "react-icons/fa6";
 import { LuMapPin } from "react-icons/lu";
-import { FaStar } from "react-icons/fa";
-import { DatePicker, Button, DateField, Label } from "@heroui/react";
+import { FaStar, FaArrowRight } from "react-icons/fa";
+import { DateField, Button, Label } from "@heroui/react";
 import {
   today,
   getLocalTimeZone,
@@ -16,8 +16,6 @@ import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import { FaArrowRight } from "react-icons/fa";
 
 const DestinationDetailsPage = () => {
 
@@ -27,6 +25,8 @@ const DestinationDetailsPage = () => {
   // STATES
   // ======================================================
   const [destination, setDestination] = useState(null);
+
+  const [error, setError] = useState(null);
 
   const [selectedDate, setSelectedDate] = useState(
     today(getLocalTimeZone())
@@ -47,17 +47,29 @@ const DestinationDetailsPage = () => {
 
         const data = await res.json();
 
+        // Invalid Destination
+        if (!data || !data._id) {
+          throw new Error("Destination not found");
+        }
+
         setDestination(data);
 
-      } catch (error) {
+      } catch (err) {
 
-        console.log(error);
+        setError(err.message);
       }
     };
 
     fetchDestination();
 
   }, [params.id]);
+
+  // ======================================================
+  // ERROR PAGE
+  // ======================================================
+  if (error) {
+    throw new Error(error);
+  }
 
   // ======================================================
   // LOADING
@@ -91,101 +103,101 @@ const DestinationDetailsPage = () => {
   // ======================================================
   const handleBooking = async () => {
 
-  try {
+    try {
 
-    // ==========================================
-    // CHECK EXISTING BOOKINGS
-    // ==========================================
-    const bookingRes = await fetch(
-      "http://localhost:5000/bookings"
-    );
-
-    const existingBookings = await bookingRes.json();
-
-    // ==========================================
-    // FIND SAME DESTINATION
-    // ==========================================
-    const alreadyBooked =
-      existingBookings.find(
-        booking =>
-          booking.destinationId === _id
+      // ==========================================
+      // CHECK EXISTING BOOKINGS
+      // ==========================================
+      const bookingRes = await fetch(
+        "http://localhost:5000/bookings"
       );
 
-    // ==========================================
-    // IF ALREADY BOOKED
-    // ==========================================
-    if (alreadyBooked) {
+      const existingBookings = await bookingRes.json();
 
-      toast.error(
-        "You already booked this destination"
-      );
+      // ==========================================
+      // FIND SAME DESTINATION
+      // ==========================================
+      const alreadyBooked =
+        existingBookings.find(
+          booking =>
+            booking.destinationId === _id
+        );
 
-      return;
-    }
+      // ==========================================
+      // IF ALREADY BOOKED
+      // ==========================================
+      if (alreadyBooked) {
 
-    // ==========================================
-    // BOOKING DATA
-    // ==========================================
-    const bookingData = {
+        toast.error(
+          "You already booked this destination"
+        );
 
-      destinationId: _id,
-
-      destinationName,
-
-      country,
-
-      imageUrl,
-
-      price,
-
-      departureDate:
-        selectedDate.toString(),
-
-      bookedAt: new Date(),
-    };
-
-    // ==========================================
-    // SAVE BOOKING
-    // ==========================================
-    const res = await fetch(
-      "http://localhost:5000/bookings",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body: JSON.stringify(
-          bookingData
-        ),
+        return;
       }
-    );
 
-    const data = await res.json();
+      // ==========================================
+      // BOOKING DATA
+      // ==========================================
+      const bookingData = {
 
-    // ==========================================
-    // SUCCESS
-    // ==========================================
-    if (data.insertedId) {
+        destinationId: _id,
 
-      toast.success(
-        <span>
-          Your trip to{" "}
-          <strong>{destinationName}</strong>{" "}
-          is confirmed
-        </span>
+        destinationName,
+
+        country,
+
+        imageUrl,
+
+        price,
+
+        departureDate:
+          selectedDate.toString(),
+
+        bookedAt: new Date(),
+      };
+
+      // ==========================================
+      // SAVE BOOKING
+      // ==========================================
+      const res = await fetch(
+        "http://localhost:5000/bookings",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify(
+            bookingData
+          ),
+        }
       );
+
+      const data = await res.json();
+
+      // ==========================================
+      // SUCCESS
+      // ==========================================
+      if (data.insertedId) {
+
+        toast.success(
+          <span>
+            Your trip to{" "}
+            <strong>{destinationName}</strong>{" "}
+            is confirmed
+          </span>
+        );
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+      toast.error("Booking Failed");
     }
-
-  } catch (error) {
-
-    console.log(error);
-
-    toast.error("Booking Failed");
-  }
-};
+  };
 
   // ======================================================
   // MAIN UI
@@ -208,11 +220,11 @@ const DestinationDetailsPage = () => {
 
         {/* Hero Image */}
         <div className="overflow-hidden rounded-xl shadow-lg">
-          
+
           <Image
             className="h-[450px] w-full object-cover"
-            alt={destinationName}
-            src={imageUrl}
+            alt={destinationName || "Destination Image"}
+            src={imageUrl || "/placeholder.jpg"}
             height={700}
             width={1400}
             priority
@@ -291,76 +303,35 @@ const DestinationDetailsPage = () => {
               <div className="grid grid-cols-1 gap-4 text-gray-600 md:grid-cols-2">
 
                 <div className="flex items-start gap-2">
-
-                  <span className="mt-1 text-green-500">
-                    ✔
-                  </span>
-
-                  <p>
-                    Luxury hotel accommodation
-                  </p>
-
+                  <span className="mt-1 text-green-500">✔</span>
+                  <p>Luxury hotel accommodation</p>
                 </div>
 
                 <div className="flex items-start gap-2">
-
-                  <span className="mt-1 text-green-500">
-                    ✔
-                  </span>
-
-                  <p>
-                    Visit famous tourist attractions
-                  </p>
-
+                  <span className="mt-1 text-green-500">✔</span>
+                  <p>Visit famous tourist attractions</p>
                 </div>
 
                 <div className="flex items-start gap-2">
-
-                  <span className="mt-1 text-green-500">
-                    ✔
-                  </span>
-
-                  <p>
-                    Professional local guide service
-                  </p>
-
+                  <span className="mt-1 text-green-500">✔</span>
+                  <p>Professional local guide service</p>
                 </div>
 
                 <div className="flex items-start gap-2">
-
-                  <span className="mt-1 text-green-500">
-                    ✔
-                  </span>
-
-                  <p>
-                    Free airport pickup & drop
-                  </p>
-
+                  <span className="mt-1 text-green-500">✔</span>
+                  <p>Free airport pickup & drop</p>
                 </div>
 
                 <div className="flex items-start gap-2">
-
-                  <span className="mt-1 text-green-500">
-                    ✔
-                  </span>
-
-                  <p>
-                    Traditional local food experience
-                  </p>
-
+                  <span className="mt-1 text-green-500">✔</span>
+                  <p>Traditional local food experience</p>
                 </div>
 
                 <div className="flex items-start gap-2">
-
-                  <span className="mt-1 text-green-500">
-                    ✔
-                  </span>
-
-                  <p>
-                    24/7 customer support
-                  </p>
-
+                  <span className="mt-1 text-green-500">✔</span>
+                  <p>24/7 customer support</p>
                 </div>
+
               </div>
             </div>
           </div>
@@ -388,12 +359,21 @@ const DestinationDetailsPage = () => {
               <div className="mt-6">
 
                 <DateField className="w-[256px]" name="date">
-            <Label>Date</Label>
-            <DateField.Group>
-              <DateField.Input>{(segment) => <DateField.Segment segment={segment} />}</DateField.Input>
-            </DateField.Group>
-          </DateField>
-                
+
+                  <Label>Date</Label>
+
+                  <DateField.Group>
+
+                    <DateField.Input>
+                      {(segment) => (
+                        <DateField.Segment segment={segment} />
+                      )}
+                    </DateField.Input>
+
+                  </DateField.Group>
+
+                </DateField>
+
               </div>
 
               {/* Button */}
@@ -402,50 +382,35 @@ const DestinationDetailsPage = () => {
                 onPress={handleBooking}
                 className="mt-6 w-full bg-cyan-500 font-semibold text-white"
               >
-                <span>Book Now</span> <span><FaArrowRight /></span>
-            
-                
+
+                <span>Book Now</span>
+
+                <span>
+                  <FaArrowRight />
+                </span>
+
               </Button>
 
               {/* Extra Info */}
               <div className="mt-6 space-y-3 text-sm text-gray-600">
 
                 <div className="flex items-center gap-2">
-
-                  <span className="text-green-500">
-                    ✔
-                  </span>
-
-                  <span>
-                    Free cancellation up to 7 days
-                  </span>
-
+                  <span className="text-green-500">✔</span>
+                  <span>Free cancellation up to 7 days</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-
-                  <span className="text-green-500">
-                    ✔
-                  </span>
-
-                  <span>
-                    Travel insurance included
-                  </span>
-
+                  <span className="text-green-500">✔</span>
+                  <span>Travel insurance included</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-
-                  <span className="text-green-500">
-                    ✔
-                  </span>
-
-                  <span>
-                    24/7 customer support
-                  </span>
-
+                  <span className="text-green-500">✔</span>
+                  <span>24/7 customer support</span>
                 </div>
+
               </div>
+
             </div>
           </div>
         </div>
