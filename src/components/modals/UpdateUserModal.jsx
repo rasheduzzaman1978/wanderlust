@@ -42,12 +42,11 @@ export default function UpdateUserModal({ user }) {
   return (
     <>
       {/* আপডেট বাটন - ছবির মতো হালকা ব্যাকগ্রাউন্ড */}
-      <Button 
-        onPress={() => setIsOpen(true)} 
-        radius="full" 
-        className="bg-[#EEEFF2] text-[#0070F3] font-semibold px-6 py-2 border-none"
-      >
-       <BiSolidEdit className="text-lg" /> Update Profile
+      <Button
+        onPress={() => setIsOpen(true)}
+        className="w-full bg-[#16A9C7] hover:bg-[#1298b3] text-white font-medium py-6 rounded-none text-[15px] shadow-none flex items-center justify-center gap-2 transition-all">
+        <BiSolidEdit className="text-lg" />
+        Edit Profile
       </Button>
 
       {/* মোডালটি কন্ডিশনালি রেন্ডার করা হয়েছে */}

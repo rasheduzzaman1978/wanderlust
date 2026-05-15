@@ -40,9 +40,7 @@ function BookingCancelAlert({
         const data =
           await res.json();
 
-        // ==========================================
         // SUCCESS
-        // ==========================================
         if (
           data.deletedCount > 0
         ) {
@@ -70,7 +68,20 @@ function BookingCancelAlert({
       {/* Open Button */}
       <Button
         aria-label="Cancel Booking"
-        className="rounded-md border border-red-300 px-5 py-2 text-sm font-medium text-red-500 transition hover:bg-red-50"
+        className="
+          w-full
+          sm:w-auto
+          rounded-md
+          border
+          border-red-300
+          px-5
+          py-2
+          text-sm
+          font-medium
+          text-red-500
+          transition
+          hover:bg-red-50
+        "
         variant="outline"
       >
 
@@ -227,18 +238,18 @@ const BookingsPage = () => {
   // MAIN UI
   // ======================================================
   return (
-    <div className="mx-auto max-w-7xl px-5 py-10">
+    <div className="mx-auto max-w-7xl px-4 md:px-5 py-10">
 
       {/* Heading */}
       <div className="mb-10">
 
-        <h1 className="text-5xl font-bold text-gray-900">
+        <h1 className="text-3xl md:text-5xl font-bold text-gray-900">
 
           My Bookings
 
         </h1>
 
-        <p className="mt-2 text-gray-500">
+        <p className="mt-2 text-sm md:text-base text-gray-500">
 
           Manage and view your upcoming travel plans
 
@@ -258,7 +269,7 @@ const BookingsPage = () => {
 
         <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300">
 
-          <h2 className="text-3xl font-bold text-gray-700">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-700">
 
             No Bookings Found
 
@@ -281,14 +292,29 @@ const BookingsPage = () => {
 
             <div
               key={booking._id}
-              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+              className="
+                flex
+                flex-col
+                lg:flex-row
+                justify-between
+                gap-6
+                rounded-xl
+                border
+                border-gray-200
+                bg-white
+                p-4
+                md:p-5
+                shadow-sm
+                transition
+                hover:shadow-md
+              "
             >
 
               {/* Left Side */}
-              <div className="flex items-center gap-5">
+              <div className="flex flex-col sm:flex-row gap-5 w-full">
 
                 {/* Image */}
-                <div className="relative h-44 w-56 overflow-hidden rounded-lg">
+                <div className="relative h-56 sm:h-44 w-full sm:w-56 overflow-hidden rounded-lg shrink-0">
 
                   <Image
                     src={
@@ -313,7 +339,7 @@ const BookingsPage = () => {
                 </div>
 
                 {/* Text Content */}
-                <div>
+                <div className="flex-1">
 
                   {/* Status */}
                   <div className="mb-3 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
@@ -323,7 +349,7 @@ const BookingsPage = () => {
                   </div>
 
                   {/* Title */}
-                  <h2 className="text-3xl font-bold text-gray-900">
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
 
                     {
                       booking.destinationName
@@ -355,7 +381,7 @@ const BookingsPage = () => {
                   </div>
 
                   {/* Price */}
-                  <h3 className="mt-5 text-3xl font-bold text-cyan-500">
+                  <h3 className="mt-5 text-2xl md:text-3xl font-bold text-cyan-500">
 
                     $
                     {booking.price}
@@ -366,7 +392,7 @@ const BookingsPage = () => {
               </div>
 
               {/* Right Side Buttons */}
-              <div className="flex items-center gap-3 self-end">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto lg:self-end">
 
                 {/* Cancel Button */}
                 <BookingCancelAlert
@@ -381,9 +407,10 @@ const BookingsPage = () => {
                 {/* View Button */}
                 <Link
                   href={`/destinations/${booking.destinationId}`}
+                  className="w-full sm:w-auto"
                 >
 
-                  <button className="rounded-md bg-cyan-500 px-5 py-2 text-sm font-medium text-white transition hover:bg-cyan-600">
+                  <button className="w-full sm:w-auto rounded-md bg-cyan-500 px-5 py-2 text-sm font-medium text-white transition hover:bg-cyan-600">
 
                     View
 
