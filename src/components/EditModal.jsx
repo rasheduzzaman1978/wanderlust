@@ -16,6 +16,8 @@ import {
 } from "@heroui/react";
 
 import { BiEdit } from "react-icons/bi";
+import Link from "next/link";
+import { FaArrowLeft } from "react-icons/fa6";
 
 export function EditModal({ destination }) {
   const [open, setOpen] = useState(false);
@@ -61,6 +63,14 @@ export function EditModal({ destination }) {
 
   return (
     <>
+      <div className="flex items-center justify-left">
+                  <Link href="/destinations">
+                  <p className="flex items-center gap-2 text-sm font-medium hover:text-blue-600 transition">
+                    <span><FaArrowLeft /></span>
+                    <span>Back to Destination</span>
+                  </p>
+                </Link>
+                </div>
       {/* Edit Button */}
       <Button
         variant="outline"

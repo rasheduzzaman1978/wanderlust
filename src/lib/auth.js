@@ -3,20 +3,28 @@ import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
 const client = new MongoClient(process.env.MONGODB_URI);
+
 const db = client.db("wanderlust");
 
 export const auth = betterAuth({
+  secret: process.env.BETTER_AUTH_SECRET,
+
   database: mongodbAdapter(db, {
-   client
+    client,
   }),
-  emailAndPassword: { 
-    enabled: true, 
-  }, 
+
+  emailAndPassword: {
+    enabled: true,
+  },
+
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      redirectURI: `${process.env.BETTER_AUTH_URL}/api/auth/callback/google`,
+      clientSecret:
+        process.env.GOOGLE_CLIENT_SECRET,
+
+      redirectURI:
+        `${process.env.BETTER_AUTH_URL}/api/auth/callback/google`,
     },
   },
 });

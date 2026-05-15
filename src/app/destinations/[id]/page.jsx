@@ -3,7 +3,7 @@
 import { DeleteAlert } from "@/components/DeleteAlert";
 import { EditModal } from "@/components/EditModal";
 import Image from "next/image";
-import { FaRegCalendar } from "react-icons/fa6";
+import { FaArrowLeft, FaRegCalendar } from "react-icons/fa6";
 import { LuMapPin } from "react-icons/lu";
 import { FaStar } from "react-icons/fa";
 import { DatePicker, Button, DateField, Label } from "@heroui/react";
@@ -16,6 +16,8 @@ import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useParams } from "next/navigation";
+import Link from "next/link";
+import { FaArrowRight } from "react-icons/fa";
 
 const DestinationDetailsPage = () => {
 
@@ -206,7 +208,7 @@ const DestinationDetailsPage = () => {
 
         {/* Hero Image */}
         <div className="overflow-hidden rounded-xl shadow-lg">
-
+          
           <Image
             className="h-[450px] w-full object-cover"
             alt={destinationName}
@@ -400,7 +402,9 @@ const DestinationDetailsPage = () => {
                 onPress={handleBooking}
                 className="mt-6 w-full bg-cyan-500 font-semibold text-white"
               >
-                Book Now
+                <span>Book Now</span> <span><FaArrowRight /></span>
+            
+                
               </Button>
 
               {/* Extra Info */}
