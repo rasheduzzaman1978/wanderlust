@@ -40,6 +40,8 @@ function BookingCancelAlert({
         const data =
           await res.json();
 
+        console.log(data);
+
         // SUCCESS
         if (
           data.deletedCount > 0
@@ -50,6 +52,12 @@ function BookingCancelAlert({
           );
 
           onDelete(bookingId);
+
+        } else {
+
+          toast.error(
+            "Failed To Cancel Booking"
+          );
         }
 
       } catch (error) {
@@ -187,7 +195,13 @@ const BookingsPage = () => {
           const data =
             await res.json();
 
-          setBookings(data);
+          console.log(data);
+
+          setBookings(
+            Array.isArray(data)
+              ? data
+              : []
+          );
 
         } catch (error) {
 
@@ -287,7 +301,10 @@ const BookingsPage = () => {
       {/* Booking Cards */}
       <div className="space-y-5">
 
-        {bookings.map(
+        {(Array.isArray(bookings)
+          ? bookings
+          : []
+        ).map(
           (booking, index) => (
 
             <div
@@ -428,3 +445,5 @@ const BookingsPage = () => {
 };
 
 export default BookingsPage;
+
+

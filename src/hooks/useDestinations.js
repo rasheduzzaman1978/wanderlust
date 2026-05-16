@@ -12,9 +12,23 @@ const useDestinations = () => {
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
-        const res = await fetch("http://localhost:5000/destination");
+        const res = await fetch(
+          "http://localhost:5000/destination",
+          {
+            cache: "no-store",
+          }
+        );
+
+        console.log(res.status);
+
         const data = await res.json();
-        setDestinations(data);
+
+        console.log(data);
+
+        setDestinations(
+          Array.isArray(data) ? data : []
+        );
+
       } catch (error) {
         console.log(error);
       }
@@ -24,7 +38,10 @@ const useDestinations = () => {
   }, []);
 
   const filteredDestinations = useMemo(() => {
-    let filtered = [...destinations];
+
+    let filtered = Array.isArray(destinations)
+      ? [...destinations]
+      : [];
 
     if (selectedCategory) {
       filtered = filtered.filter(
@@ -33,35 +50,53 @@ const useDestinations = () => {
     }
 
     if (selectedPrice === "under1000") {
-      filtered = filtered.filter((item) => item.price < 1000);
+      filtered = filtered.filter(
+        (item) => item.price < 1000
+      );
     }
 
     if (selectedPrice === "1000to2000") {
       filtered = filtered.filter(
-        (item) => item.price >= 1000 && item.price <= 2000
+        (item) =>
+          item.price >= 1000 &&
+          item.price <= 2000
       );
     }
 
     if (selectedPrice === "2000plus") {
-      filtered = filtered.filter((item) => item.price > 2000);
+      filtered = filtered.filter(
+        (item) => item.price > 2000
+      );
     }
 
     if (sortBy === "lowToHigh") {
-      filtered.sort((a, b) => a.price - b.price);
+      filtered.sort(
+        (a, b) => a.price - b.price
+      );
     }
 
     if (sortBy === "highToLow") {
-      filtered.sort((a, b) => b.price - a.price);
+      filtered.sort(
+        (a, b) => b.price - a.price
+      );
     }
 
     if (sortBy === "name") {
       filtered.sort((a, b) =>
-        a.destinationName.localeCompare(b.destinationName)
+        a.destinationName.localeCompare(
+          b.destinationName
+        )
       );
     }
 
     return filtered;
-  }, [destinations, selectedCategory, selectedPrice, sortBy]);
+
+  }, [
+    destinations,
+    selectedCategory,
+    selectedPrice,
+    sortBy,
+  ]);
 
   return {
     destinations,
